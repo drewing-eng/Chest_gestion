@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coffre — Gestion d'inventaire</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div id="app">
+  <header class="topbar">
+    <div class="brand-row">
+      <div class="brand">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 10h18v8a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-8Z"/><path d="M3 10 5 4h14l2 6"/><path d="M10.5 14.2a1.5 1.5 0 1 0 3 0 1.5 1.5 0 0 0-3 0Z"/></svg>
+        <h1>Coffre</h1>
+      </div>
+    </div>
+    <nav class="tabs">
+      <button class="tab active" data-tab="gestion">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 10h18v8a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-8Z"/><path d="M3 10 5 4h14l2 6"/></svg>
+        Gestion
+      </button>
+      <button class="tab" data-tab="journal">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h9l4 4v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M9 10h6M9 14h6M9 18h3"/></svg>
+        Journal
+      </button>
+      <button class="tab" data-tab="catalogue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15.5A1.5 1.5 0 0 1 18.5 20H6.5A2.5 2.5 0 0 1 4 17.5v-12Z"/><path d="M4 17.5A2.5 2.5 0 0 1 6.5 15H20"/></svg>
+        Catalogue
+      </button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- ONGLET GESTION -->
+    <section id="tab-gestion" class="tab-panel active">
+      <div id="gestion-list-view">
+        <div class="section-head">
+          <div>
+            <h2>Vos coffres</h2>
+            <p>Vue d'ensemble du remplissage</p>
+          </div>
+          <button class="btn btn-gold btn-sm" onclick="openCoffreForm()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            Nouveau
+          </button>
+        </div>
+        <div id="coffre-grid" class="coffre-grid"></div>
+      </div>
+
+      <div id="gestion-detail-view" hidden></div>
+    </section>
+
+    <!-- ONGLET JOURNAL -->
+    <section id="tab-journal" class="tab-panel">
+      <div class="section-head">
+        <div>
+          <h2>Journal</h2>
+          <p>Chaque opération, empilée dans l'ordre. Suppression possible, modification impossible.</p>
+        </div>
+      </div>
+      <div id="journal-list" class="chain"></div>
+    </section>
+
+    <!-- ONGLET CATALOGUE -->
+    <section id="tab-catalogue" class="tab-panel">
+      <div class="section-head">
+        <div>
+          <h2>Catalogue</h2>
+          <p>Les objets connus et leur quantité maximale par emplacement</p>
+        </div>
+        <button class="btn btn-gold btn-sm" onclick="openItemForm()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+          Nouvel objet
+        </button>
+      </div>
+      <div class="search-bar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="cat-search" type="text" placeholder="Rechercher un objet…" oninput="filterCatalogue()">
+      </div>
+      <div id="cat-list" class="cat-list"></div>
+    </section>
+  </main>
+</div>
+
+<div id="modal-root"></div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
