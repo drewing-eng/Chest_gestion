@@ -9,4 +9,4 @@ binding = "ASSETS"
 [[d1_databases]]
 binding = "DB"
 database_name = "coffre-db"
-database_id = "REPLACE_WITH_D1_DATABASE_ID"
+database_id = "2bc99ebc-e1c9-40b1-bfcb-1599afce450a"
