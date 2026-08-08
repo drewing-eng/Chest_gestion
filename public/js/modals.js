@@ -413,6 +413,10 @@ function openImportForm() {
       <label>Fichier JSON</label>
       <input type="file" id="import-file" accept="application/json,.json">
     </div>
+    <div class="field">
+      <label>Ou coller le JSON</label>
+      <textarea id="import-text" rows="6" placeholder='[{"nom": "Bois", "description": "...", "quantite_max": 100}]'></textarea>
+    </div>
     <div id="import-result"></div>
     <div class="form-actions">
       <button class="btn btn-ghost" onclick="closeModal()">Fermer</button>
@@ -422,17 +426,24 @@ function openImportForm() {
 }
 
 async function submitImportForm() {
-  const input = document.getElementById('import-file');
-  const file = input.files[0];
-  if (!file) return showFormError('import-form-error', 'Choisissez un fichier.');
+  const file = document.getElementById('import-file').files[0];
+  const pastedText = document.getElementById('import-text').value.trim();
+  if (!file && !pastedText) return showFormError('import-form-error', 'Choisissez un fichier ou collez du JSON.');
+
+  let rawText;
+  try {
+    rawText = file ? await file.text() : pastedText;
+  } catch (err) {
+    return showFormError('import-form-error', 'Impossible de lire le fichier.');
+  }
 
   let items;
   try {
-    items = JSON.parse(await file.text());
+    items = JSON.parse(rawText);
   } catch (err) {
-    return showFormError('import-form-error', 'Fichier JSON invalide.');
+    return showFormError('import-form-error', 'JSON invalide.');
   }
-  if (!Array.isArray(items)) return showFormError('import-form-error', 'Le fichier doit contenir un tableau JSON.');
+  if (!Array.isArray(items)) return showFormError('import-form-error', 'Le contenu doit être un tableau JSON.');
 
   let result;
   try {
