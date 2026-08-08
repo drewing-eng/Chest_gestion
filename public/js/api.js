@@ -19,6 +19,7 @@ export const api = {
   updateCatalogueItem: (id, body) =>
     request(`/catalogue/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify(body) }),
   deleteCatalogueItem: (id) => request(`/catalogue/${encodeURIComponent(id)}`, { method: 'DELETE' }),
+  importCatalogue: (items) => request('/catalogue/import', { method: 'POST', body: JSON.stringify(items) }),
 
   getJournal: () => request('/journal'),
   createJournalEntry: (body) => request('/journal', { method: 'POST', body: JSON.stringify(body) }),

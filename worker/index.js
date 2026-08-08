@@ -39,6 +39,7 @@ async function handleApi(request, url, env) {
 
   if (pathname === '/api/catalogue' && method === 'GET') return listCatalogue(db);
   if (pathname === '/api/catalogue' && method === 'POST') return createCatalogueItem(db, request);
+  if (pathname === '/api/catalogue/import' && method === 'POST') return importCatalogue(db, request);
 
   const catMatch = pathname.match(/^\/api\/catalogue\/([^/]+)$/);
   if (catMatch && method === 'PUT') return updateCatalogueItem(db, catMatch[1], request);
@@ -227,6 +228,71 @@ async function deleteCatalogueItem(db, id) {
 
   await db.prepare('DELETE FROM catalogue WHERE id = ?').bind(id).run();
   return new Response(null, { status: 204 });
+}
+
+async function importCatalogue(db, request) {
+  const items = await request.json().catch(() => null);
+  if (!Array.isArray(items)) return errorResponse('Le fichier doit contenir un tableau JSON d’objets.');
+
+  const { results: existingRows } = await db.prepare('SELECT id, nom FROM catalogue').all();
+  const byNom = new Map(existingRows.map((i) => [i.nom.toLowerCase(), i]));
+  const coffres = computeCoffres(await getJournal(db));
+
+  const created = [];
+  const updated = [];
+  const skipped = [];
+  const statements = [];
+  const seenInFile = new Set();
+
+  for (const raw of items) {
+    const nom = raw && raw.nom ? String(raw.nom).trim() : '';
+    const description = raw && raw.description ? String(raw.description).trim() : '';
+    const max = Number(raw && raw.quantite_max);
+
+    if (!nom) {
+      skipped.push({ nom: (raw && raw.nom) || '(sans nom)', reason: 'Nom manquant.' });
+      continue;
+    }
+    if (!Number.isInteger(max) || max < 1) {
+      skipped.push({ nom, reason: 'Quantité maximale invalide.' });
+      continue;
+    }
+    const key = nom.toLowerCase();
+    if (seenInFile.has(key)) {
+      skipped.push({ nom, reason: 'Doublon dans le fichier (seule la première occurrence est prise en compte).' });
+      continue;
+    }
+    seenInFile.add(key);
+
+    const match = byNom.get(key);
+    if (match) {
+      const usedMax = maxQuantityUsedFor(coffres, match.id);
+      if (max < usedMax) {
+        skipped.push({
+          nom,
+          reason: `Impossible d'abaisser le maximum sous ${usedMax} (quantité déjà présente dans un coffre).`,
+        });
+        continue;
+      }
+      statements.push(
+        db.prepare('UPDATE catalogue SET description = ?, quantite_max = ? WHERE id = ?').bind(description, max, match.id)
+      );
+      updated.push(nom);
+    } else {
+      const id = crypto.randomUUID();
+      statements.push(
+        db.prepare('INSERT INTO catalogue (id, nom, description, quantite_max) VALUES (?, ?, ?, ?)').bind(id, nom, description, max)
+      );
+      created.push(nom);
+    }
+  }
+
+  const chunkSize = 50;
+  for (let i = 0; i < statements.length; i += chunkSize) {
+    await db.batch(statements.slice(i, i + chunkSize));
+  }
+
+  return json({ created, updated, skipped });
 }
 
 /* ---------- journal ---------- */

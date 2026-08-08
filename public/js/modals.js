@@ -402,6 +402,55 @@ async function deleteItem(itemId) {
   window.renderAll();
 }
 
+/* ---------- Catalogue : import JSON ---------- */
+
+function openImportForm() {
+  openModal(`
+    <h3>Importer un catalogue JSON</h3>
+    <div class="modal-sub">Un tableau d'objets avec les champs <code>nom</code>, <code>description</code> (optionnelle) et <code>quantite_max</code>. Un objet dont le nom existe déjà dans le catalogue est mis à jour.</div>
+    <div class="form-error" id="import-form-error"></div>
+    <div class="field">
+      <label>Fichier JSON</label>
+      <input type="file" id="import-file" accept="application/json,.json">
+    </div>
+    <div id="import-result"></div>
+    <div class="form-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Fermer</button>
+      <button class="btn btn-primary" onclick="submitImportForm()">Importer</button>
+    </div>
+  `);
+}
+
+async function submitImportForm() {
+  const input = document.getElementById('import-file');
+  const file = input.files[0];
+  if (!file) return showFormError('import-form-error', 'Choisissez un fichier.');
+
+  let items;
+  try {
+    items = JSON.parse(await file.text());
+  } catch (err) {
+    return showFormError('import-form-error', 'Fichier JSON invalide.');
+  }
+  if (!Array.isArray(items)) return showFormError('import-form-error', 'Le fichier doit contenir un tableau JSON.');
+
+  let result;
+  try {
+    result = await api.importCatalogue(items);
+  } catch (err) {
+    showFormError('import-form-error', err.message);
+    return;
+  }
+
+  document.getElementById('import-result').innerHTML = `
+    <div class="modal-sub">
+      ${result.created.length} créé(s), ${result.updated.length} mis à jour, ${result.skipped.length} ignoré(s).
+      ${result.skipped.length ? `<ul>${result.skipped.map((s) => `<li>${esc(s.nom)} — ${esc(s.reason)}</li>`).join('')}</ul>` : ''}
+    </div>
+  `;
+  window.renderAll();
+}
+
 Object.assign(window, {
   closeModal,
   openCoffreForm,
@@ -419,4 +468,6 @@ Object.assign(window, {
   submitItemForm,
   confirmDeleteItem,
   deleteItem,
+  openImportForm,
+  submitImportForm,
 });

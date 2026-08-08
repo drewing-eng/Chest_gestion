@@ -67,15 +67,21 @@
 
     <!-- ONGLET CATALOGUE -->
     <section id="tab-catalogue" class="tab-panel">
-      <div class="section-head">
+      <div class="section-head" style="flex-wrap:wrap; gap:10px;">
         <div>
           <h2>Catalogue</h2>
           <p>Les objets connus et leur quantité maximale par emplacement</p>
         </div>
-        <button class="btn btn-gold btn-sm" onclick="openItemForm()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-          Nouvel objet
-        </button>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn btn-ghost btn-sm" onclick="openImportForm()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 15V4M12 4 8 8M12 4l4 4"/><path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3"/></svg>
+            Importer JSON
+          </button>
+          <button class="btn btn-gold btn-sm" onclick="openItemForm()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            Nouvel objet
+          </button>
+        </div>
       </div>
       <div class="search-bar">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
