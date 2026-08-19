@@ -1,13 +1,14 @@
 import { renderGestionList, renderCoffreDetail, openCoffreDetail, closeCoffreDetail } from './render-gestion.js';
 import { renderJournal } from './render-journal.js';
 import { renderCatalogue } from './render-catalogue.js';
+import { renderProduction } from './render-production.js';
 import './modals.js';
 
 window.openCoffreDetail = openCoffreDetail;
 window.closeCoffreDetail = closeCoffreDetail;
 
 async function renderAll() {
-  await Promise.all([renderGestionList(), renderCoffreDetail(), renderJournal(), renderCatalogue()]);
+  await Promise.all([renderGestionList(), renderCoffreDetail(), renderJournal(), renderCatalogue(), renderProduction()]);
 }
 window.renderAll = renderAll;
 

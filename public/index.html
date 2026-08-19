@@ -31,6 +31,10 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15.5A1.5 1.5 0 0 1 18.5 20H6.5A2.5 2.5 0 0 1 4 17.5v-12Z"/><path d="M4 17.5A2.5 2.5 0 0 1 6.5 15H20"/></svg>
         Catalogue
       </button>
+      <button class="tab" data-tab="production">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 3h6M10 3v6.2L4.9 18a2 2 0 0 0 1.7 3h10.8a2 2 0 0 0 1.7-3L14 9.2V3"/></svg>
+        Production
+      </button>
     </nav>
   </header>
 
@@ -88,6 +92,17 @@
         <input id="cat-search" type="text" placeholder="Rechercher un objet…" oninput="filterCatalogue()">
       </div>
       <div id="cat-list" class="cat-list"></div>
+    </section>
+
+    <!-- ONGLET PRODUCTION -->
+    <section id="tab-production" class="tab-panel">
+      <div class="section-head">
+        <div>
+          <h2>Production</h2>
+          <p>Ce qu'il manque pour remplir chaque emplacement déjà entamé à son maximum</p>
+        </div>
+      </div>
+      <div id="production-list" class="cat-list"></div>
     </section>
   </main>
 </div>
