@@ -54,7 +54,10 @@ button{ font-family: inherit; cursor: pointer; }
 #app{
   max-width: 780px;
   margin: 0 auto;
-  padding: 0 16px 64px;
+  padding: 0 16px calc(78px + env(safe-area-inset-bottom));
+}
+@media (min-width: 640px){
+  #app{ padding-bottom: 64px; }
 }
 
 header.topbar{
@@ -86,35 +89,69 @@ header.topbar{
 .brand svg{ width:28px; height:28px; color: var(--gold-deep); }
 
 nav.tabs{
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
   display:flex;
-  gap:6px;
-  background: var(--parchment-deep);
-  padding: 5px;
-  border-radius: 999px;
-  border: 1px solid rgba(110,46,140,0.25);
+  gap:2px;
+  background: var(--parchment-card);
+  padding: 6px 6px calc(6px + env(safe-area-inset-bottom));
+  border-radius: 0;
+  border: none;
+  border-top: 1px solid rgba(110,46,140,0.22);
+  box-shadow: 0 -2px 12px rgba(90,30,100,0.12);
 }
 
 nav.tabs button{
   flex:1;
   border:none;
   background: transparent;
-  padding: 10px 8px;
-  border-radius: 999px;
-  font-size: 0.92rem;
+  padding: 6px 4px;
+  border-radius: var(--radius-md);
+  font-size: 0.66rem;
   font-weight: 600;
-  color: var(--ink-soft);
+  color: var(--ink-faint);
   display:flex;
+  flex-direction: column;
   align-items:center;
   justify-content:center;
-  gap:6px;
+  gap:3px;
   transition: background .15s ease, color .15s ease;
 }
 
-nav.tabs button svg{ width:16px; height:16px; }
+nav.tabs button svg{ width:20px; height:20px; }
 
 nav.tabs button.active{
-  background: var(--ink);
-  color: var(--parchment-card);
+  background: transparent;
+  color: var(--gold-deep);
+}
+
+@media (min-width: 640px){
+  nav.tabs{
+    position: static;
+    gap:6px;
+    background: var(--parchment-deep);
+    padding: 5px;
+    border-radius: 999px;
+    border: 1px solid rgba(110,46,140,0.25);
+    border-top: 1px solid rgba(110,46,140,0.25);
+    box-shadow: none;
+  }
+  nav.tabs button{
+    flex-direction: row;
+    padding: 10px 8px;
+    border-radius: 999px;
+    font-size: 0.92rem;
+    gap:6px;
+    color: var(--ink-soft);
+  }
+  nav.tabs button svg{ width:16px; height:16px; }
+  nav.tabs button.active{
+    background: var(--ink);
+    color: var(--parchment-card);
+  }
 }
 
 main{ padding-top: 8px; }
