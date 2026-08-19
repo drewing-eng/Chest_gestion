@@ -220,6 +220,16 @@ main{ padding-top: 8px; }
   color: var(--ink-faint);
   margin-bottom: 12px;
 }
+.coffre-card .description{
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  line-height: 1.4;
+  margin: -6px 0 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 
 .fill-row{ display:flex; align-items:center; gap:8px; }
 .fill-segments{ display:flex; gap:3px; flex:1; }

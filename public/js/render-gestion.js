@@ -26,6 +26,7 @@ export async function renderGestionList() {
         <div class="coffre-icon">${ICONS.chest}</div>
         <h3>${esc(c.nom)}</h3>
         <div class="emplacement">${esc(c.emplacement || 'Emplacement non défini')}</div>
+        ${c.description ? `<div class="description">${esc(c.description)}</div>` : ''}
         <div class="fill-row">
           <div class="fill-segments">${segs}</div>
           <div class="fill-count">${occupied}/${c.slotsCount}</div>
