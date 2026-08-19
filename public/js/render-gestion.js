@@ -6,9 +6,9 @@ export let currentDetailCoffre = null;
 
 export async function renderGestionList() {
   const grid = document.getElementById('coffre-grid');
-  let coffres;
+  let coffres, catalogue;
   try {
-    coffres = await api.getCoffres();
+    [coffres, catalogue] = await Promise.all([api.getCoffres(), api.getCatalogue()]);
   } catch (err) {
     grid.innerHTML = `<div class="empty-state">${esc(err.message)}</div>`;
     return;
@@ -17,10 +17,18 @@ export async function renderGestionList() {
     grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">${ICONS.chest}<div>Aucun coffre pour l'instant.<br>Créez-en un pour commencer.</div></div>`;
     return;
   }
+  const itemById = (id) => catalogue.find((i) => i.id === id);
   grid.innerHTML = coffres
     .map((c) => {
       const occupied = c.slots.filter(Boolean).length;
-      const segs = c.slots.map((s) => `<span class="${s ? 'filled' : ''}"></span>`).join('');
+      const segs = c.slots
+        .map((s) => {
+          if (!s) return `<div class="fill-slot"><span></span></div>`;
+          const item = itemById(s.itemId);
+          const name = item ? item.nom : s.itemId;
+          return `<div class="fill-slot"><div class="fill-slot-label" title="${esc(name)}">${esc(name)}</div><span class="filled"></span></div>`;
+        })
+        .join('');
       return `
       <button class="coffre-card" onclick="openCoffreDetail('${esc(c.nom)}')">
         <div class="coffre-icon">${ICONS.chest}</div>

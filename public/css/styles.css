@@ -231,10 +231,21 @@ main{ padding-top: 8px; }
   overflow: hidden;
 }
 
-.fill-row{ display:flex; align-items:center; gap:8px; }
-.fill-segments{ display:flex; gap:3px; flex:1; }
+.fill-row{ display:flex; align-items:flex-end; gap:8px; }
+.fill-segments{ display:flex; gap:3px; flex:1; align-items:flex-end; }
+.fill-slot{ flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+.fill-slot-label{
+  font-size: 0.55rem;
+  line-height: 1.1;
+  color: var(--ink-faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center;
+}
 .fill-segments span{
-  height:7px; flex:1; border-radius:3px;
+  display:block;
+  height:7px; width:100%; border-radius:3px;
   background: rgba(110,46,140,0.16);
 }
 .fill-segments span.filled{ background: var(--gold); }
