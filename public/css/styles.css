@@ -232,7 +232,7 @@ main{ padding-top: 8px; }
 }
 
 .fill-row{ display:flex; align-items:flex-end; gap:8px; }
-.fill-segments{ display:flex; gap:3px; flex:1; align-items:flex-end; }
+.fill-segments{ display:flex; gap:3px; flex:1; min-width:0; align-items:flex-end; }
 .fill-slot{ flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
 .fill-slot-label{
   font-size: 0.55rem;
