@@ -80,13 +80,13 @@ export function filterGestion() {
 }
 
 function renderResourceFilterOptions() {
-  const panel = document.getElementById('resource-filter-panel');
+  const options = document.getElementById('resource-filter-options');
   if (cachedCatalogue.length === 0) {
-    panel.innerHTML = `<div class="empty-state">Aucune ressource dans le catalogue.</div>`;
+    options.innerHTML = `<div class="empty-state">Aucune ressource dans le catalogue.</div>`;
     return;
   }
   const sorted = [...cachedCatalogue].sort((a, b) => a.nom.localeCompare(b.nom));
-  panel.innerHTML = sorted
+  options.innerHTML = sorted
     .map(
       (i) => `
     <label class="resource-filter-row">
@@ -105,12 +105,25 @@ export function toggleResourceFilterPanel() {
   backdrop.hidden = !show;
 }
 
-export function toggleResourceFilter(id) {
-  if (selectedResourceIds.has(id)) selectedResourceIds.delete(id);
-  else selectedResourceIds.add(id);
+function updateResourceFilterBadge() {
   const badge = document.getElementById('resource-filter-badge');
   badge.hidden = selectedResourceIds.size === 0;
   badge.textContent = String(selectedResourceIds.size);
+}
+
+export function toggleResourceFilter(id) {
+  if (selectedResourceIds.has(id)) selectedResourceIds.delete(id);
+  else selectedResourceIds.add(id);
+  updateResourceFilterBadge();
+  applyGestionFilter();
+}
+
+export function clearGestionFilters() {
+  selectedResourceIds.clear();
+  const searchInput = document.getElementById('gestion-search');
+  if (searchInput) searchInput.value = '';
+  document.querySelectorAll('#resource-filter-options input[type="checkbox"]').forEach((cb) => (cb.checked = false));
+  updateResourceFilterBadge();
   applyGestionFilter();
 }
 
@@ -216,3 +229,4 @@ window.closeCoffreDetail = closeCoffreDetail;
 window.filterGestion = filterGestion;
 window.toggleResourceFilterPanel = toggleResourceFilterPanel;
 window.toggleResourceFilter = toggleResourceFilter;
+window.clearGestionFilters = clearGestionFilters;

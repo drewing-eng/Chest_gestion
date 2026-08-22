@@ -46,7 +46,13 @@
         </button>
       </div>
       <div id="resource-filter-backdrop" class="resource-filter-backdrop" hidden onclick="toggleResourceFilterPanel()"></div>
-      <div id="resource-filter-panel" class="resource-filter-panel" hidden></div>
+      <div id="resource-filter-panel" class="resource-filter-panel" hidden>
+        <div class="resource-filter-header">
+          <span>Filtrer par ressource</span>
+          <button type="button" class="link-btn" onclick="clearGestionFilters()">Effacer les filtres</button>
+        </div>
+        <div id="resource-filter-options"></div>
+      </div>
     </div>
   </header>
 

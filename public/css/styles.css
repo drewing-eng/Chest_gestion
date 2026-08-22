@@ -196,6 +196,9 @@ nav.tabs button.active{
   padding: 8px;
   max-height: 260px;
   overflow-y:auto;
+}
+
+#resource-filter-options{
   display:flex; flex-direction:column; gap:2px;
 }
 
@@ -208,6 +211,26 @@ nav.tabs button.active{
 }
 .resource-filter-row:hover{ background: rgba(110,46,140,0.08); }
 .resource-filter-row input{ accent-color: var(--gold-deep); width:15px; height:15px; flex-shrink:0; }
+
+.resource-filter-header{
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  padding: 4px 8px 8px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid rgba(110,46,140,0.15);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.link-btn{
+  border:none; background:none; padding:0;
+  font-family:'Inter'; font-size: 0.78rem; font-weight:600;
+  color: var(--gold-deep);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  flex-shrink:0;
+}
+.link-btn:hover{ color: var(--seal-red); }
 
 .resource-filter-panel[hidden]{ display:none; }
 .filter-badge[hidden]{ display:none; }
