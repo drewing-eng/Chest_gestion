@@ -4,49 +4,120 @@ import { ICONS } from './icons.js';
 
 export let currentDetailCoffre = null;
 
+let cachedCoffres = [];
+let cachedCatalogue = [];
+const selectedResourceIds = new Set();
+
 export async function renderGestionList() {
   const grid = document.getElementById('coffre-grid');
-  let coffres, catalogue;
   try {
-    [coffres, catalogue] = await Promise.all([api.getCoffres(), api.getCatalogue()]);
+    [cachedCoffres, cachedCatalogue] = await Promise.all([api.getCoffres(), api.getCatalogue()]);
   } catch (err) {
     grid.innerHTML = `<div class="empty-state">${esc(err.message)}</div>`;
     return;
   }
-  if (coffres.length === 0) {
+  renderResourceFilterOptions();
+  applyGestionFilter();
+}
+
+function itemNameById(id) {
+  const item = cachedCatalogue.find((i) => i.id === id);
+  return item ? item.nom : id;
+}
+
+function coffreCardHtml(c) {
+  const occupied = c.slots.filter(Boolean).length;
+  const segs = c.slots
+    .map((s) => {
+      if (!s) return `<div class="fill-slot"><span></span></div>`;
+      const name = itemNameById(s.itemId);
+      return `<div class="fill-slot"><div class="fill-slot-label" title="${esc(name)}">${esc(name)}</div><span class="filled"></span></div>`;
+    })
+    .join('');
+  return `
+  <button class="coffre-card" onclick="openCoffreDetail('${esc(c.nom)}')">
+    <div class="coffre-icon">${ICONS.chest}</div>
+    <h3>${esc(c.nom)}</h3>
+    <div class="emplacement">${esc(c.emplacement || 'Emplacement non défini')}</div>
+    ${c.description ? `<div class="description">${esc(c.description)}</div>` : ''}
+    <div class="fill-row">
+      <div class="fill-segments">${segs}</div>
+      <div class="fill-count">${occupied}/${c.slotsCount}</div>
+    </div>
+  </button>`;
+}
+
+function coffreMatchesSearch(c, q) {
+  if (!q) return true;
+  if (c.nom.toLowerCase().includes(q)) return true;
+  if (c.emplacement && c.emplacement.toLowerCase().includes(q)) return true;
+  if (c.description && c.description.toLowerCase().includes(q)) return true;
+  return c.slots.some((s) => s && itemNameById(s.itemId).toLowerCase().includes(q));
+}
+
+function coffreMatchesResources(c) {
+  if (selectedResourceIds.size === 0) return true;
+  return c.slots.some((s) => s && selectedResourceIds.has(s.itemId));
+}
+
+export function applyGestionFilter() {
+  const grid = document.getElementById('coffre-grid');
+  if (cachedCoffres.length === 0) {
     grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">${ICONS.chest}<div>Aucun coffre pour l'instant.<br>Créez-en un pour commencer.</div></div>`;
     return;
   }
-  const itemById = (id) => catalogue.find((i) => i.id === id);
-  grid.innerHTML = coffres
-    .map((c) => {
-      const occupied = c.slots.filter(Boolean).length;
-      const segs = c.slots
-        .map((s) => {
-          if (!s) return `<div class="fill-slot"><span></span></div>`;
-          const item = itemById(s.itemId);
-          const name = item ? item.nom : s.itemId;
-          return `<div class="fill-slot"><div class="fill-slot-label" title="${esc(name)}">${esc(name)}</div><span class="filled"></span></div>`;
-        })
-        .join('');
-      return `
-      <button class="coffre-card" onclick="openCoffreDetail('${esc(c.nom)}')">
-        <div class="coffre-icon">${ICONS.chest}</div>
-        <h3>${esc(c.nom)}</h3>
-        <div class="emplacement">${esc(c.emplacement || 'Emplacement non défini')}</div>
-        ${c.description ? `<div class="description">${esc(c.description)}</div>` : ''}
-        <div class="fill-row">
-          <div class="fill-segments">${segs}</div>
-          <div class="fill-count">${occupied}/${c.slotsCount}</div>
-        </div>
-      </button>`;
-    })
+  const q = (document.getElementById('gestion-search')?.value || '').toLowerCase().trim();
+  const filtered = cachedCoffres.filter((c) => coffreMatchesSearch(c, q) && coffreMatchesResources(c));
+  if (filtered.length === 0) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">Aucun coffre ne correspond à la recherche.</div>`;
+    return;
+  }
+  grid.innerHTML = filtered.map(coffreCardHtml).join('');
+}
+
+export function filterGestion() {
+  applyGestionFilter();
+}
+
+function renderResourceFilterOptions() {
+  const panel = document.getElementById('resource-filter-panel');
+  if (cachedCatalogue.length === 0) {
+    panel.innerHTML = `<div class="empty-state">Aucune ressource dans le catalogue.</div>`;
+    return;
+  }
+  const sorted = [...cachedCatalogue].sort((a, b) => a.nom.localeCompare(b.nom));
+  panel.innerHTML = sorted
+    .map(
+      (i) => `
+    <label class="resource-filter-row">
+      <input type="checkbox" value="${esc(i.id)}" ${selectedResourceIds.has(i.id) ? 'checked' : ''} onchange="toggleResourceFilter('${esc(i.id)}')">
+      <span>${esc(i.nom)}</span>
+    </label>`
+    )
     .join('');
+}
+
+export function toggleResourceFilterPanel() {
+  const panel = document.getElementById('resource-filter-panel');
+  const backdrop = document.getElementById('resource-filter-backdrop');
+  const show = panel.hidden;
+  panel.hidden = !show;
+  backdrop.hidden = !show;
+}
+
+export function toggleResourceFilter(id) {
+  if (selectedResourceIds.has(id)) selectedResourceIds.delete(id);
+  else selectedResourceIds.add(id);
+  const badge = document.getElementById('resource-filter-badge');
+  badge.hidden = selectedResourceIds.size === 0;
+  badge.textContent = String(selectedResourceIds.size);
+  applyGestionFilter();
 }
 
 export function openCoffreDetail(nom) {
   currentDetailCoffre = nom;
   document.getElementById('gestion-list-view').hidden = true;
+  document.getElementById('gestion-search-wrap').hidden = true;
   const detail = document.getElementById('gestion-detail-view');
   detail.hidden = false;
   renderCoffreDetail();
@@ -56,6 +127,7 @@ export function closeCoffreDetail() {
   currentDetailCoffre = null;
   document.getElementById('gestion-list-view').hidden = false;
   document.getElementById('gestion-detail-view').hidden = true;
+  document.getElementById('gestion-search-wrap').hidden = false;
   renderGestionList();
 }
 
@@ -141,3 +213,6 @@ export async function renderCoffreDetail() {
 
 window.openCoffreDetail = openCoffreDetail;
 window.closeCoffreDetail = closeCoffreDetail;
+window.filterGestion = filterGestion;
+window.toggleResourceFilterPanel = toggleResourceFilterPanel;
+window.toggleResourceFilter = toggleResourceFilter;

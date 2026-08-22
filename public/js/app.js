@@ -19,6 +19,7 @@ document.querySelectorAll('nav.tabs button').forEach((btn) => {
 function switchTab(name) {
   document.querySelectorAll('nav.tabs button').forEach((b) => b.classList.toggle('active', b.dataset.tab === name));
   document.querySelectorAll('.tab-panel').forEach((p) => p.classList.toggle('active', p.id === 'tab-' + name));
+  document.getElementById('gestion-search-wrap').hidden = name !== 'gestion';
   renderAll();
 }
 

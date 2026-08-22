@@ -36,6 +36,18 @@
         Production
       </button>
     </nav>
+    <div id="gestion-search-wrap" class="gestion-search-wrap">
+      <div class="search-bar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="gestion-search" type="text" placeholder="Rechercher un coffre ou une ressource…" oninput="filterGestion()">
+        <button class="filter-toggle-btn" onclick="toggleResourceFilterPanel()" title="Filtrer par ressource">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16l-6 7v6l-4 2v-8L4 5Z"/></svg>
+          <span id="resource-filter-badge" class="filter-badge" hidden>0</span>
+        </button>
+      </div>
+      <div id="resource-filter-backdrop" class="resource-filter-backdrop" hidden onclick="toggleResourceFilterPanel()"></div>
+      <div id="resource-filter-panel" class="resource-filter-panel" hidden></div>
+    </div>
   </header>
 
   <main>
